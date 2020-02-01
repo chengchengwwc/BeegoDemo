@@ -9,7 +9,7 @@ import (
 
 func init(){
 	orm.RegisterDriver("mysql", orm.DRMySQL)
-    orm.RegisterDataBase("db1", "mysql", "root:wwc880515@tcp(127.0.0.1:3306)/mydb?charset=utf8")
+    orm.RegisterDataBase("db1", "mysql", "root:abcd@tcp(127.0.0.1:3306)/mydb?charset=utf8")
 }
 
 

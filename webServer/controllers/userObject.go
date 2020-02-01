@@ -13,7 +13,6 @@ type UserObjectController struct {
 }
 
 
-
 func (u *UserObjectController) Post(){
 	var user models.User
 	json.Unmarshal(u.Ctx.Input.RequestBody, &user)
