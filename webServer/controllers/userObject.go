@@ -23,6 +23,13 @@ func (u *UserObjectController) Post(){
 	u.ServeJSON()
 }
 
+// @Title Login
+// @Description  用户登陆
+// @Param	body username password
+// @Success 200 {int} token，username，group,groupName
+// @Failure 404 用户名不存在
+// @Failure 500 数据序列化失败
+// @router /login/ [post]
 func (u *UserObjectController) Login(){
 	var user models.UserCredential
 	messageMap := make(map[string]string)

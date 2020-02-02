@@ -48,3 +48,37 @@ func AddLoginDetail(username,session_id string) error{
 	}
 	return nil
 }
+
+
+func CheckUserCredential(username string) (int64,error){
+	// 检查用户名是否存在
+	o := orm.NewOrm()
+	res, err := o.Raw("SELECT username FROM main_user WHERE username = ?",username).Exec()
+	if err == nil{
+		num,_ := res.RowsAffected()
+		return num, nil
+	}else{
+		return 0,err
+	}
+}
+
+
+func AddUseCredential(username,password,group,team string)(string,error) {
+	num,err := CheckUserCredential(username)
+	if err != nil{
+		return "",err
+	}
+	if num > 0{
+		return "用户名已经存在",nil
+	}
+	hash, err := bcrypt.Hash(password)
+	if err != nil{
+		return "密码哈希化失败",err
+	}
+	o := orm.NewOrm()
+	_,err = o.Raw("INSERT INTO main_user (username,password,user_group,groupName) VALUES (?,?,?,?)",username,hash,group,team).Exec()
+	if err != nil{
+		return "用户创建失败",err
+	}
+	return "用户创建成功",nil
+}
