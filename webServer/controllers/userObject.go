@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"github.com/astaxie/beego/logs"
 	"BeegoDemo/webServer/models"
 	"github.com/astaxie/beego"
 	"encoding/json"
 	"fmt"
+	"BeegoDemo/webServer/utils"
 
 )
 
@@ -23,39 +25,27 @@ func (u *UserObjectController) Post(){
 
 func (u *UserObjectController) Login(){
 	var user models.UserCredential
+	messageMap := make(map[string]string)
 	err := json.Unmarshal(u.Ctx.Input.RequestBody, &user)
 	if err != nil {
+		logs.Error("用户登陆数据序列化失败：",err)
 		u.Abort("500")
 		return
 	}
 	user_group,group_name,err := models.GetUserCredential(user.Username,user.Pwd)
 	if err != nil {
+		logs.Error("用户名不存在",err)
 		u.CustomAbort(404,"用户名不存在")
 		return
 	}
-	fmt.Println(user_group)
-	fmt.Println(group_name)
-	u.Data["json"] = "登陆成功"
+	token := utils.GetSessionToken()
+	models.AddLoginDetail(user.Username,utils.GetSessionToken())
+	messageMap["token"] = token
+	messageMap["username"] = user.Username
+	messageMap["group"] = user_group
+	messageMap["GroupName"] = group_name
+	u.Data["json"] = messageMap
 	u.ServeJSON()
-	
-
-
-
-
-
-
-
-
-
-
-	username := u.GetString("username")
-	password := u.GetString("password")
-	fmt.Println(username)
-	fmt.Println(password)
-	u.Data["json"] = "user not exist"
-	u.ServeJSON()
-
-
 }
 
 

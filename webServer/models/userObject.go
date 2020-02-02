@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/astaxie/beego/orm"
 	"github.com/jameskeane/bcrypt"
+	"BeegoDemo/webServer/utils"
 )
 
 
@@ -22,7 +23,6 @@ type LoginUserDetail struct {
 
 
 
-
 func GetUserCredential(username string,password string) (string,string,error){
 	//登陆功能
 	var maps []orm.Params
@@ -38,3 +38,13 @@ func GetUserCredential(username string,password string) (string,string,error){
 	}
 }
 
+func AddLoginDetail(username,session_id string) error{
+	// 记录登陆时间
+	login_time := utils.GetCurrentTime()
+	o := orm.NewOrm()
+	_,err := o.Raw("INSERT INTO sessions (login_name,login_time,token) VALUES (?,?,?)",username,login_time,session_id).Exec()
+	if err != nil{
+		return err
+	}
+	return nil
+}
